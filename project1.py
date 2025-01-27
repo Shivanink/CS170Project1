@@ -29,7 +29,12 @@ class Node:
         self.child3 = None
         self.child4 = None
         
-
+def expands(puzzle):
+    #find posiiton of blank (0)
+    #see if it can move up, down, left, or right - ensure each is valid
+    #do the move (make another puzzle) and make a node for it
+    #increase depth by 1
+    #update parent and child nodes
 
         
 
@@ -110,12 +115,12 @@ def heuristics(puzzle, heurName, goalState):
             for j in range(len(puzzle[i])):
                 chosen = puzzle[i][j]
                 if (chosen != 0 and puzzle[i][j] != goalState[i][j]): #if its not a blank tile and if its already not in the goal position, then get its distance
-                    acutal_i = positions[chosen][0]
+                    actual_i = positions[chosen][0]
                     actual_j = positions[chosen][1]
                     distance += abs(j - actual_j) + abs(i - actual_j)
         return distance
     
-    return 0 #for heurisitc
+    return 0 #for uniform
 
 
 
