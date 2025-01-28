@@ -57,7 +57,7 @@ def generatingChild(puzzle, heuristicOne, searchName):
         temp = copy1[ipos-1][jpos]
         copy1[ipos-1][jpos] = 0
         copy1[ipos][jpos] = temp #move blank up
-        child1Node = Node(puzzle = copy1, depth = puzzle.depth +1, parent = puzzle, heuristics(copy1,searchName,goalState)) #create node
+        child1Node = Node(puzzle = copy1, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy1,searchName,goalState)) #create node
         child1Node = puzzle.child1 #set created node to child of original node
 
     
