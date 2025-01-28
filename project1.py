@@ -24,14 +24,42 @@ class Node:
         self.depth = depth #depth/level of the tree
         self.parent = parent #parent/previous state of puzzle
         self.heur = heur #heurisitc value for the node
-        self.child1 = None
-        self.child2 = None
-        self.child3 = None
-        self.child4 = None
-        
-def expands(puzzle):
+        self.child1 = None #up
+        self.child2 = None #down
+        self.child3 = None #left
+        self.child4 = None #right
+
+def findblank(puzzle) :
+    for i in range(len(puzzle)):
+        for j in range(len(puzzle[i])):
+            if(puzzle[i][j] == 0):
+                return i, j
+    
+def copyPuzzle(puzzle): #to make a copy of the puzzle
+    copy =[]
+    for i in puzzle:
+        row = []
+        for j in i:
+            row.append[i]
+        copy.append[row]
+    return copy
+
+
+def expand(puzzle, someNode):
     #find posiiton of blank (0)
+    ipos, jpos = findblank(puzzle)
     #see if it can move up, down, left, or right - ensure each is valid
+
+    copy1 = copyPuzzle(puzzle)
+    #if moving blank up is valid
+    if(ipos - 1 >= 0): #if there is space above the blank
+        temp = copy1[ipos-1][jpos]
+        copy1[ipos-1][jpos] = 0
+        copy1[ipos][jpos] = temp
+        child1Node = Node(puzzle = copy1, depth = someNode.depth +1, parent = someNode, heur = 0)
+        child1Node = someNode.child1
+
+    
     #do the move (make another puzzle) and make a node for it
     #increase depth by 1
     #update parent and child nodes
