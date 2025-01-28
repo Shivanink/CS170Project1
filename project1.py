@@ -29,7 +29,7 @@ class Node:
         self.child3 = None #left
         self.child4 = None #right
 
-def findblank(puzzle) :
+def findblank(puzzle) : #finds 0
     for i in range(len(puzzle)):
         for j in range(len(puzzle[i])):
             if(puzzle[i][j] == 0):
@@ -45,7 +45,8 @@ def copyPuzzle(puzzle): #to make a copy of the puzzle
     return copy
 
 
-def expand(puzzle, someNode):
+
+def generatingChild(puzzle, heuristicOne, searchName):
     #find posiiton of blank (0)
     ipos, jpos = findblank(puzzle)
     #see if it can move up, down, left, or right - ensure each is valid
@@ -55,14 +56,21 @@ def expand(puzzle, someNode):
     if(ipos - 1 >= 0): #if there is space above the blank
         temp = copy1[ipos-1][jpos]
         copy1[ipos-1][jpos] = 0
-        copy1[ipos][jpos] = temp
-        child1Node = Node(puzzle = copy1, depth = someNode.depth +1, parent = someNode, heur = 0)
-        child1Node = someNode.child1
+        copy1[ipos][jpos] = temp #move blank up
+        child1Node = Node(puzzle = copy1, depth = puzzle.depth +1, parent = puzzle, heuristics(copy1,searchName,goalState)) #create node
+        child1Node = puzzle.child1 #set created node to child of original node
 
     
-    #do the move (make another puzzle) and make a node for it
-    #increase depth by 1
-    #update parent and child nodes
+    #down
+
+    #left 
+
+    #right
+
+    #pop the one with the least cost in the q
+    #will insert all 4 children in the priority q
+    #check while q is not empty when you search priority q
+    # i am deisgning the priority q that sorts the weight paraemter using heur
 
         
 
@@ -71,7 +79,6 @@ def expand(puzzle, someNode):
 def select_and_init_algorithm(puzzle):
     algorithm = input("Select algorithm. (1) for Uniform Cost Search, (2) for the Misplaced Tile Heuristic, ""or (3) the Manhattan Distance Heuristic." + '\n')
     if algorithm == "1":
-        heuristicVal = 0
         uniform_cost_search(puzzle) #for uniform, the default heuristic is 0
     elif algorithm == "2":
         heuristicVal = heuristics(puzzle, "misplaced tile")
@@ -150,6 +157,11 @@ def heuristics(puzzle, heurName, goalState):
     
     return 0 #for uniform
 
+
+#general search
+#empty q-> intialize first node
+#while q is not empty, pop front of the q which will return a node (after popping see if the popped node is a goal state or not)
+#generate child nodes -> insert in q after getting heuristics
 
 
         
