@@ -46,11 +46,13 @@ def copyPuzzle(puzzle): #to make a copy of the puzzle
 
 
 
-def generatingChild(puzzle, heuristicOne, searchName):
+def generateChild(puzzle, heuristicOne, searchName):
     #find posiiton of blank (0)
     ipos, jpos = findblank(puzzle)
     #see if it can move up, down, left, or right - ensure each is valid
 
+
+    #up
     copy1 = copyPuzzle(puzzle)
     #if moving blank up is valid
     if(ipos - 1 >= 0): #if there is space above the blank
@@ -58,15 +60,45 @@ def generatingChild(puzzle, heuristicOne, searchName):
         copy1[ipos-1][jpos] = 0
         copy1[ipos][jpos] = temp #move blank up
         child1Node = Node(puzzle = copy1, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy1,searchName,goalState)) #create node
-        child1Node = puzzle.child1 #set created node to child of original node
+        puzzle.child1 = child1Node #set created node to child of original node
 
     
     #down
+    copy2 = copyPuzzle(puzzle)
+    #if moving blank down is valid
+    if(ipos + 1 < len(puzzle)): #if there is space below the blank
+        temp = copy2[ipos+1][jpos]
+        copy2[ipos+1][jpos] = 0
+        copy2[ipos][jpos] = temp #move blank down
+        child2Node = Node(puzzle = copy2, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy2,searchName,goalState)) #create node
+        puzzle.child2 = child2Node #set created node to child of original node
 
     #left 
+    copy3 = copyPuzzle(puzzle)
+    #if moving blank left is valid
+    if(jpos - 1 >= 0): #if there is space left of the blank
+        temp = copy3[ipos][jpos-1]
+        copy3[ipos][jpos-1] = 0
+        copy3[ipos][jpos] = temp #move blank left
+        child3Node = Node(puzzle = copy3, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy3,searchName,goalState)) #create node
+        puzzle.child3 = child3Node #set created node to child of original node
 
+    
     #right
+    copy4 = copyPuzzle(puzzle)
+    #if moving blank right is valid
+    if(jpos + 1 < len(puzzle[0])): #if there is space right of the blank
+        temp = copy4[ipos][jpos+1]
+        copy4[ipos][jpos+1] = 0
+        copy4[ipos][jpos] = temp #move blank right
+        child4Node = Node(puzzle = copy4, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy4,searchName,goalState)) #create node
+        puzzle.child4 = child4Node #set created node to child of original node
 
+
+    return child1Node, child2Node, child3Node, child4Node
+    
+    
+    
     #pop the one with the least cost in the q
     #will insert all 4 children in the priority q
     #check while q is not empty when you search priority q
@@ -163,6 +195,8 @@ def heuristics(puzzle, heurName, goalState):
 #while q is not empty, pop front of the q which will return a node (after popping see if the popped node is a goal state or not)
 #generate child nodes -> insert in q after getting heuristics
 
+
+#make a general search function, have the function take in the heurisitc and puzzle
 
         
 
