@@ -48,7 +48,8 @@ def copyPuzzle(puzzle): #to make a copy of the puzzle
 
 
 
-def generateChild(puzzle, heuristicOne, searchName):
+def generateChild(node, searchName):
+    puzzle = node.puzzle
     #find posiiton of blank (0)
     ipos, jpos = findblank(puzzle)
     #see if it can move up, down, left, or right - ensure each is valid
@@ -61,8 +62,8 @@ def generateChild(puzzle, heuristicOne, searchName):
         temp = copy1[ipos-1][jpos]
         copy1[ipos-1][jpos] = 0
         copy1[ipos][jpos] = temp #move blank up
-        child1Node = Node(puzzle = copy1, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy1,searchName,goalState)) #create node
-        puzzle.child1 = child1Node #set created node to child of original node
+        child1Node = Node(puzzle = copy1, depth = node.depth +1, parent = node, heur =heuristics(copy1,searchName,goalState)) #create node
+        node.child1 = child1Node #set created node to child of original node
 
     
     #down
@@ -72,8 +73,8 @@ def generateChild(puzzle, heuristicOne, searchName):
         temp = copy2[ipos+1][jpos]
         copy2[ipos+1][jpos] = 0
         copy2[ipos][jpos] = temp #move blank down
-        child2Node = Node(puzzle = copy2, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy2,searchName,goalState)) #create node
-        puzzle.child2 = child2Node #set created node to child of original node
+        child2Node = Node(puzzle = copy2, depth = node.depth +1, parent = node, heur =heuristics(copy2,searchName,goalState)) #create node
+        node.child2 = child2Node #set created node to child of original node
 
     #left 
     copy3 = copyPuzzle(puzzle)
@@ -82,8 +83,8 @@ def generateChild(puzzle, heuristicOne, searchName):
         temp = copy3[ipos][jpos-1]
         copy3[ipos][jpos-1] = 0
         copy3[ipos][jpos] = temp #move blank left
-        child3Node = Node(puzzle = copy3, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy3,searchName,goalState)) #create node
-        puzzle.child3 = child3Node #set created node to child of original node
+        child3Node = Node(puzzle = copy3, depth = node.depth +1, parent = node, heur =heuristics(copy3,searchName,goalState)) #create node
+        node.child3 = child3Node #set created node to child of original node
 
     
     #right
@@ -93,8 +94,8 @@ def generateChild(puzzle, heuristicOne, searchName):
         temp = copy4[ipos][jpos+1]
         copy4[ipos][jpos+1] = 0
         copy4[ipos][jpos] = temp #move blank right
-        child4Node = Node(puzzle = copy4, depth = puzzle.depth +1, parent = puzzle, heur =heuristics(copy4,searchName,goalState)) #create node
-        puzzle.child4 = child4Node #set created node to child of original node
+        child4Node = Node(puzzle = copy4, depth = node.depth +1, parent = node, heur =heuristics(copy4,searchName,goalState)) #create node
+        node.child4 = child4Node #set created node to child of original node
 
 
     return child1Node, child2Node, child3Node, child4Node
@@ -113,7 +114,7 @@ def generateChild(puzzle, heuristicOne, searchName):
 def select_and_init_algorithm(puzzle):
     algorithm = input("Select algorithm. (1) for Uniform Cost Search, (2) for the Misplaced Tile Heuristic, ""or (3) the Manhattan Distance Heuristic." + '\n')
     if algorithm == "1":
-        generalSearch(puzzle, "uniform") #for uniform, the default heuristic is 0
+        generalSearch(puzzle, heuristics(puzzle, "uniform")) #for uniform, the default heuristic is 0
     elif algorithm == "2":
         heuristicVal = heuristics(puzzle, "misplaced tile")
         misplaced_tile(puzzle) #maybe take in heuristic here
@@ -168,7 +169,7 @@ def mapping(goalState): #general function to create dictionary so you can map th
     return chart
 
 
-def heuristics(puzzle, heurName, goalState):
+def heuristics(puzzle, heurName):
     
     if heurName == "misplaced tile":
         count = 0
@@ -177,7 +178,7 @@ def heuristics(puzzle, heurName, goalState):
                 if(puzzle[i][j]!= goalState[i][j] and puzzle[i][j] != 0): #check if goalstate placement is equal to puzzle; ignore 0 because its a blank
                     count += 1
         return count
-    if heurName == "manhattan distance": #need to find shortest distance to goal position for each tile, and add all the ones that arent in the goal position
+    elif heurName == "manhattan distance": #need to find shortest distance to goal position for each tile, and add all the ones that arent in the goal position
         positions = mapping(goalState)
         distance = 0
         for i in range(len(puzzle)):
@@ -189,7 +190,10 @@ def heuristics(puzzle, heurName, goalState):
                     distance += abs(j - actual_j) + abs(i - actual_j)
         return distance
     
-    return 0 #for uniform
+    elif heurName == "uniform":
+        return 0 #for uniform
+    else:
+        print("Invalid HeurName")
 
 
 #general search
@@ -204,7 +208,7 @@ def heuristics(puzzle, heurName, goalState):
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
     root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName, goalState)))
-    heapq.heappush(nodes, (root.depth+ root.heur, root)) #tuple we are using: (cost/priority, node)
+    heapq.heappush(nodes, (root.depth + root.heur, root)) #tuple we are using: (cost/priority, node)
     #root.depth + root.heur -> determines which node gets expanded first with using heuristics function
     #Notes: g(n) + h(n) = f(n), smallest f(n) is expanded
     Ongoing = True
@@ -220,6 +224,26 @@ def generalSearch(initialState, heurName):
             Ongoing = False
             return Ongoing
         fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
+
+        puzzleCheck = repr(node.puzzle) #turns it into string
+        if not( puzzleCheck in visited): #check if a puzzle has been visited or not and make sure it only gets visited once
+            visited.add(puzzleCheck)
+
+        if(node.puzzle == goalState): #if puzzle is at goal state, we are finished
+            return node
+        c1, c2, c3, c4 =  generateChild(node, heurName) #get children notes by expanding/generating childs
+        #add the child nodes to the queue
+        if c1: 
+            heapq.heappush(nodes, (c1.depth + c1.heur, c1))
+        if c2: 
+            heapq.heappush(nodes, (c2.depth + c2.heur, c2))
+        if c3: 
+            heapq.heappush(nodes, (c3.depth + c3.heur, c3))
+        if c4:
+            heapq.heappush(nodes, (c4.depth + c4.heur, c4))
+    return None
+
+
     
         
         
