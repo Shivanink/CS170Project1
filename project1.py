@@ -1,4 +1,6 @@
 import heapq as min_heap_esque_queue
+import heapq
+from queue import Queue
 
 
 goalState = [[1,2,3],
@@ -153,7 +155,7 @@ def init_default_puzzle_mode():
     
 
 def print_puzzle(puzzle):
-    for i in range(0,3): #DONT HARD CODE THIS
+    for i in range(0,3): 
         print(puzzle[i])
     print('\n')
 
@@ -198,10 +200,33 @@ def heuristics(puzzle, heurName, goalState):
 
 #make a general search function, have the function take in the heurisitc and puzzle
 
+#use heapq since it maintains smallest element/lowest priority at top
+def generalSearch(initialState, heurName):
+    nodes = [] #make empty Queue
+    root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName, goalState)))
+    heapq.heappush(nodes, (root.depth+ root.heur, root)) #tuple we are using: (value/priority, node)
+    #root.depth + root.heur -> determines which node gets expanded first with using heuristics function
+    #Notes: g(n) + h(n) = f(n), smallest f(n) is expanded
+    Ongoing = True
+
+    #path so far so you can trace
+    visited = set()
+
+    while Ongoing:
+        if(nodes.empty()):
+            Ongoing = False
+            return Ongoing
+        
+        
         
 
 
 
+
+
+
+
+ 
 
 def uniform_cost_search(puzzle): 
     return 
