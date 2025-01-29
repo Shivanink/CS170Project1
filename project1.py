@@ -42,8 +42,8 @@ def copyPuzzle(puzzle): #to make a copy of the puzzle
     for i in puzzle:
         row = []
         for j in i:
-            row.append[i]
-        copy.append[row]
+            row.append(j)
+        copy.append(row)
     return copy
 
 
@@ -113,7 +113,7 @@ def generateChild(puzzle, heuristicOne, searchName):
 def select_and_init_algorithm(puzzle):
     algorithm = input("Select algorithm. (1) for Uniform Cost Search, (2) for the Misplaced Tile Heuristic, ""or (3) the Manhattan Distance Heuristic." + '\n')
     if algorithm == "1":
-        uniform_cost_search(puzzle) #for uniform, the default heuristic is 0
+        generalSearch(puzzle, "uniform") #for uniform, the default heuristic is 0
     elif algorithm == "2":
         heuristicVal = heuristics(puzzle, "misplaced tile")
         misplaced_tile(puzzle) #maybe take in heuristic here
@@ -204,7 +204,7 @@ def heuristics(puzzle, heurName, goalState):
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
     root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName, goalState)))
-    heapq.heappush(nodes, (root.depth+ root.heur, root)) #tuple we are using: (value/priority, node)
+    heapq.heappush(nodes, (root.depth+ root.heur, root)) #tuple we are using: (cost/priority, node)
     #root.depth + root.heur -> determines which node gets expanded first with using heuristics function
     #Notes: g(n) + h(n) = f(n), smallest f(n) is expanded
     Ongoing = True
@@ -212,10 +212,15 @@ def generalSearch(initialState, heurName):
     #path so far so you can trace
     visited = set()
 
+    print("got here")
+    print(root.puzzle)
+
     while Ongoing:
-        if(nodes.empty()):
+        if not nodes: #if nodes is empty
             Ongoing = False
             return Ongoing
+        fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
+    
         
         
         
@@ -234,3 +239,6 @@ def misplaced_tile(puzzle, heuristic):
     return
 def manhattan_distance(puzzle, heuristic):
     return
+
+if __name__ =="__main__":
+    main()
