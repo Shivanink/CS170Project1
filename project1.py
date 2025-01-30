@@ -11,7 +11,7 @@ trivial = [[1,2,3],
            [4,5,6],
            [7,8,0]]
 
-veryEasy = [[1,2,0],
+veryEasy = [[1,2,3],
             [4,5,6],
             [7,0,8]]
 
@@ -30,6 +30,8 @@ class Node:
         self.child2 = None #down
         self.child3 = None #left
         self.child4 = None #right
+    def __lt__(self, other): #function that compares nodes, also min queue works with smallest values first
+        return (self.depth + self.heur) < (other.depth + other.heur)
 
 def findblank(puzzle) : #finds 0
     for i in range(len(puzzle)):
@@ -54,6 +56,10 @@ def generateChild(node, searchName):
     ipos, jpos = findblank(puzzle)
     #see if it can move up, down, left, or right - ensure each is valid
 
+    child1Node = None
+    child2Node = None
+    child3Node = None
+    child4Node = None
 
     #up
     copy1 = copyPuzzle(puzzle)
@@ -62,7 +68,7 @@ def generateChild(node, searchName):
         temp = copy1[ipos-1][jpos]
         copy1[ipos-1][jpos] = 0
         copy1[ipos][jpos] = temp #move blank up
-        child1Node = Node(puzzle = copy1, depth = node.depth +1, parent = node, heur =heuristics(copy1,searchName,goalState)) #create node
+        child1Node = Node(puzzle = copy1, depth = node.depth +1, parent = node, heur =heuristics(copy1,searchName)) #create node
         node.child1 = child1Node #set created node to child of original node
 
     
@@ -73,7 +79,7 @@ def generateChild(node, searchName):
         temp = copy2[ipos+1][jpos]
         copy2[ipos+1][jpos] = 0
         copy2[ipos][jpos] = temp #move blank down
-        child2Node = Node(puzzle = copy2, depth = node.depth +1, parent = node, heur =heuristics(copy2,searchName,goalState)) #create node
+        child2Node = Node(puzzle = copy2, depth = node.depth +1, parent = node, heur =heuristics(copy2,searchName)) #create node
         node.child2 = child2Node #set created node to child of original node
 
     #left 
@@ -83,7 +89,7 @@ def generateChild(node, searchName):
         temp = copy3[ipos][jpos-1]
         copy3[ipos][jpos-1] = 0
         copy3[ipos][jpos] = temp #move blank left
-        child3Node = Node(puzzle = copy3, depth = node.depth +1, parent = node, heur =heuristics(copy3,searchName,goalState)) #create node
+        child3Node = Node(puzzle = copy3, depth = node.depth +1, parent = node, heur =heuristics(copy3,searchName)) #create node
         node.child3 = child3Node #set created node to child of original node
 
     
@@ -94,11 +100,22 @@ def generateChild(node, searchName):
         temp = copy4[ipos][jpos+1]
         copy4[ipos][jpos+1] = 0
         copy4[ipos][jpos] = temp #move blank right
-        child4Node = Node(puzzle = copy4, depth = node.depth +1, parent = node, heur =heuristics(copy4,searchName,goalState)) #create node
+        child4Node = Node(puzzle = copy4, depth = node.depth +1, parent = node, heur =heuristics(copy4,searchName)) #create node
         node.child4 = child4Node #set created node to child of original node
 
 
-    return child1Node, child2Node, child3Node, child4Node
+    children = [] #list of children
+
+    #ensure all the children are valid
+    if child1Node:
+        children.append(child1Node)
+    if child2Node:
+        children.append(child2Node)
+    if child3Node:
+        children.append(child3Node)
+    if child4Node:
+        children.append(child4Node)
+    return children
     
     
     
@@ -114,13 +131,11 @@ def generateChild(node, searchName):
 def select_and_init_algorithm(puzzle):
     algorithm = input("Select algorithm. (1) for Uniform Cost Search, (2) for the Misplaced Tile Heuristic, ""or (3) the Manhattan Distance Heuristic." + '\n')
     if algorithm == "1":
-        generalSearch(puzzle, heuristics(puzzle, "uniform")) #for uniform, the default heuristic is 0
+        generalSearch(puzzle, "uniform") #for uniform, the default heuristic is 0
     elif algorithm == "2":
-        heuristicVal = heuristics(puzzle, "misplaced tile")
-        misplaced_tile(puzzle) #maybe take in heuristic here
+        generalSearch(puzzle, "misplaced tile")
     elif(algorithm == "3"):
-        heuristicVal = heuristics(puzzle, "manhattan distance")
-        manhattan_distance(puzzle)
+        generalSearch(puzzle, "manhattan distance")
     else:
         print("Invalid input")
 
@@ -193,7 +208,7 @@ def heuristics(puzzle, heurName):
     elif heurName == "uniform":
         return 0 #for uniform
     else:
-        print("Invalid HeurName")
+        raise ValueError("Invalid Heurisitic Name")
 
 
 #general search
@@ -207,40 +222,74 @@ def heuristics(puzzle, heurName):
 #use heapq since it maintains smallest element/lowest priority at top
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
-    root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName, goalState)))
+    root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName)))
     heapq.heappush(nodes, (root.depth + root.heur, root)) #tuple we are using: (cost/priority, node)
     #root.depth + root.heur -> determines which node gets expanded first with using heuristics function
     #Notes: g(n) + h(n) = f(n), smallest f(n) is expanded
+
+
+    #DOUBLE CHECK U ARE USING MIN HEAP
     Ongoing = True
 
     #path so far so you can trace
     visited = set()
 
-    print("got here")
-    print(root.puzzle)
+   # print("got here")
+    print_puzzle(root.puzzle)
 
-    while Ongoing:
+    while Ongoing: #check heap size instead
+       # print("ongoing")
         if not nodes: #if nodes is empty
             Ongoing = False
             return Ongoing
         fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
 
-        puzzleCheck = repr(node.puzzle) #turns it into string
-        if not( puzzleCheck in visited): #check if a puzzle has been visited or not and make sure it only gets visited once
-            visited.add(puzzleCheck)
+        nodeTuple = []
+        for i in node.puzzle:
+            nodeTuple.append(tuple(i))
+        nodeTuple = tuple(nodeTuple)
 
-        if(node.puzzle == goalState): #if puzzle is at goal state, we are finished
+        goalTuple = []
+        for i in goalState:
+            goalTuple.append(tuple(i))
+        goalTuple = tuple(goalTuple)
+        
+        if(nodeTuple == goalTuple): #if puzzle is at goal state, we are finished
+            print("GOAL!!")
+            print_puzzle(node.puzzle)
             return node
-        c1, c2, c3, c4 =  generateChild(node, heurName) #get children notes by expanding/generating childs
+
+        '''
+        puzzleCheck = [] #turn list of lists into tuple of tuples so its immutable and we can hash
+        for i in node.puzzle:
+            puzzleCheck.append(tuple(i)) #turn each row to a tuple
+        puzzleCheck = tuple(puzzleCheck) #list of tuples to tuple of tuples
+
+        if puzzleCheck in visited: #check if a puzzle has been visited or not and make sure it only gets visited once
+            continue
+        '''
+
+        if nodeTuple in visited:
+            continue
+
+        visited.add(nodeTuple) #updated visited set, was puzzle check before
+
+        children =  generateChild(node, heurName) #get children notes by expanding/generating childs
         #add the child nodes to the queue
-        if c1: 
-            heapq.heappush(nodes, (c1.depth + c1.heur, c1))
-        if c2: 
-            heapq.heappush(nodes, (c2.depth + c2.heur, c2))
-        if c3: 
-            heapq.heappush(nodes, (c3.depth + c3.heur, c3))
-        if c4:
-            heapq.heappush(nodes, (c4.depth + c4.heur, c4))
+        for i in children:
+            if i is not None:
+                state = []
+                for j in i.puzzle:
+                    state.append(tuple(j))
+                state = tuple(state)
+            
+                if state not in visited:
+                    #testing
+                    if state != goalTuple:
+                        print("calculating")
+                        print_puzzle(state)
+                    visited.add(state)
+                    heapq.heappush(nodes, (i.depth + i.heur, i))
     return None
 
 
