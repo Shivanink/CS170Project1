@@ -19,6 +19,13 @@ easy     =  [[1,2,0],
             [4,5,3],
             [7,8,6]]
 
+doable = [[0,1,2],
+        [4,5,3],
+        [7,8,6]]
+ohboy =  [[8,7,1],
+        [6,0,2],
+        [5,4,3]]
+
 
 class Node:
     def __init__(self, puzzle, root = None, depth = 0, parent = None,  heur = 0):
@@ -175,6 +182,12 @@ def init_default_puzzle_mode():
     if selected_difficulty == "2":
         print("Difficulty of 'Easy' selected.")
         return easy
+    if selected_difficulty == "3":
+        print("Difficulty of 'Doable' selected.")
+        return doable
+    if selected_difficulty == "4":
+        print("Difficulty of 'Easy' selected.")
+        return ohboy
 
     
 
@@ -286,7 +299,7 @@ def generalSearch(initialState, heurName):
         '''
 
         if nodeTuple in visited:
-            print("nodeTuple is in visited")
+            #print("nodeTuple is in visited")
             continue
 
         visited.add(nodeTuple) #updated visited set, was puzzle check before
@@ -310,25 +323,16 @@ def generalSearch(initialState, heurName):
     return None
 
 
-    
+    #keep track of depth
+    # #keep track of time it takes to run for the graphs       
         
         
-        
 
 
 
 
 
 
-
- 
-
-def uniform_cost_search(puzzle): 
-    return 
-def misplaced_tile(puzzle, heuristic):
-    return
-def manhattan_distance(puzzle, heuristic):
-    return
 
 if __name__ =="__main__":
     main()
