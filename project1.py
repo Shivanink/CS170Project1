@@ -14,6 +14,10 @@ trivial = [[1,2,3],
 veryEasy = [[1,2,3],
             [4,5,6],
             [7,0,8]]
+            
+easy     =  [[1,2,0],
+            [4,5,3],
+            [7,8,6]]
 
 
 class Node:
@@ -168,6 +172,10 @@ def init_default_puzzle_mode():
     if selected_difficulty == "1":
         print("Difficulty of 'Very Easy' selected.")
         return veryEasy
+    if selected_difficulty == "2":
+        print("Difficulty of 'Easy' selected.")
+        return easy
+
     
 
 def print_puzzle(puzzle):
@@ -233,16 +241,18 @@ def generalSearch(initialState, heurName):
 
     #path so far so you can trace
     visited = set()
-
-   # print("got here")
-    print_puzzle(root.puzzle)
+    count1 = 0
 
     while Ongoing: #check heap size instead
        # print("ongoing")
         if not nodes: #if nodes is empty
+            print("Queue empty")
             Ongoing = False
             return Ongoing
         fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
+        #count1 += 1
+        #print(f"count: {count1}")
+    
 
         nodeTuple = []
         for i in node.puzzle:
@@ -253,10 +263,16 @@ def generalSearch(initialState, heurName):
         for i in goalState:
             goalTuple.append(tuple(i))
         goalTuple = tuple(goalTuple)
-        
+        #print(nodeTuple, goalTuple)
         if(nodeTuple == goalTuple): #if puzzle is at goal state, we are finished
-            print("GOAL!!")
-            print_puzzle(node.puzzle)
+            correctPath = []
+            while node:
+                correctPath.append(node.puzzle)
+                node = node.parent
+            correctPath.reverse()
+            for i in correctPath:
+                print_puzzle(i)
+            print("Goal Reached!")
             return node
 
         '''
@@ -270,11 +286,14 @@ def generalSearch(initialState, heurName):
         '''
 
         if nodeTuple in visited:
+            print("nodeTuple is in visited")
             continue
 
         visited.add(nodeTuple) #updated visited set, was puzzle check before
-
+        #print("generating child for count", count1)
         children =  generateChild(node, heurName) #get children notes by expanding/generating childs
+        #print('got here for pusihing children in the queue')
+       # print(len(children))
         #add the child nodes to the queue
         for i in children:
             if i is not None:
@@ -282,14 +301,12 @@ def generalSearch(initialState, heurName):
                 for j in i.puzzle:
                     state.append(tuple(j))
                 state = tuple(state)
-            
+                #print(f"state:{state} visited: {visited}")
                 if state not in visited:
-                    #testing
-                    if state != goalTuple:
-                        print("calculating")
-                        print_puzzle(state)
-                    visited.add(state)
+                    # visited.add(state)
                     heapq.heappush(nodes, (i.depth + i.heur, i))
+                
+        #print(len(nodes))
     return None
 
 
