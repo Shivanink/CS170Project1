@@ -8,7 +8,11 @@ goalState = [[1,2,3],
             [4,5,6],
             [7,8,0]]
 
-trivial = [[1,2,3],
+trivial = [[0,7,2],
+           [4,6,1],
+           [3,5,8]]
+
+trivial1 = [[1,2,3],
            [4,5,6],
            [7,8,0]]
 
@@ -225,7 +229,7 @@ def heuristics(puzzle, heurName): #returns heuristic
                 if (chosen != 0 and puzzle[i][j] != goalState[i][j]): #if its not a blank tile and if its already not in the goal position, then get its distance
                     actual_i = positions[chosen][0]
                     actual_j = positions[chosen][1]
-                    distance += abs(j - actual_j) + abs(i - actual_j)
+                    distance += abs(j - actual_j) + abs(i - actual_i)
         return distance
     
     elif heurName == "uniform":
@@ -319,8 +323,6 @@ def generalSearch(initialState, heurName):
         if nodeTuple in visited:
             #print("nodeTuple is in visited")
             continue
-        
-        
         visited.add(nodeTuple) #updated visited set, was puzzle check before
         #print("generating child for count", count1)
         expandedCount += 1
