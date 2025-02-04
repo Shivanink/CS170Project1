@@ -1,6 +1,7 @@
 import heapq as min_heap_esque_queue
 import heapq
 from queue import Queue
+import time
 
 
 goalState = [[1,2,3],
@@ -25,6 +26,7 @@ doable = [[0,1,2],
 ohboy =  [[8,7,1],
         [6,0,2],
         [5,4,3]]
+
 
 
 class Node:
@@ -172,7 +174,7 @@ def main():
     return 
 
 def init_default_puzzle_mode():
-    selected_difficulty = input("You wish to use a default puzzle. Please enter a desired difficulty on a scale from 0 to 5." + '\n')
+    selected_difficulty = input("You wish to use a default puzzle. Please enter a desired difficulty on a scale from 0 to 4." + '\n')
     if selected_difficulty == "0":
         print("Difficulty of 'Trivial' selected.")
         return trivial
@@ -205,7 +207,7 @@ def mapping(goalState): #general function to create dictionary so you can map th
     return chart
 
 
-def heuristics(puzzle, heurName):
+def heuristics(puzzle, heurName): #returns heuristic
     
     if heurName == "misplaced tile":
         count = 0
@@ -243,6 +245,9 @@ def heuristics(puzzle, heurName):
 #use heapq since it maintains smallest element/lowest priority at top
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
+
+    starting = time.perf_counter()
+
     root = (Node(puzzle = initialState, depth = 0, parent = None, heur=heuristics(initialState, heurName)))
     heapq.heappush(nodes, (root.depth + root.heur, root)) #tuple we are using: (cost/priority, node)
     #root.depth + root.heur -> determines which node gets expanded first with using heuristics function
@@ -254,7 +259,10 @@ def generalSearch(initialState, heurName):
 
     #path so far so you can trace
     visited = set()
-    count1 = 0
+   # count1 = 0
+    maxQlen = 0 #find len of the max queue
+    expandedCount = 0
+
 
     while Ongoing: #check heap size instead
        # print("ongoing")
@@ -262,6 +270,7 @@ def generalSearch(initialState, heurName):
             print("Queue empty")
             Ongoing = False
             return Ongoing
+        maxQlen = max(len(nodes), maxQlen)
         fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
         #count1 += 1
         #print(f"count: {count1}")
@@ -278,6 +287,7 @@ def generalSearch(initialState, heurName):
         goalTuple = tuple(goalTuple)
         #print(nodeTuple, goalTuple)
         if(nodeTuple == goalTuple): #if puzzle is at goal state, we are finished
+            depth = node.depth #depth of final node
             correctPath = []
             while node:
                 correctPath.append(node.puzzle)
@@ -285,6 +295,14 @@ def generalSearch(initialState, heurName):
             correctPath.reverse()
             for i in correctPath:
                 print_puzzle(i)
+            ending = time.perf_counter()
+
+            totalTime = (ending - starting) #caclulate duration
+            totalTime = round(totalTime, 4) #round to 5th place
+            print(f"Time to Run: {totalTime} seconds")
+            print(f"Depth: {depth}")
+            print(f"Number of expanded nodes: {expandedCount}")
+            print(f"Max Queue Length: {maxQlen}")
             print("Goal Reached!")
             return node
 
@@ -301,9 +319,11 @@ def generalSearch(initialState, heurName):
         if nodeTuple in visited:
             #print("nodeTuple is in visited")
             continue
-
+        
+        
         visited.add(nodeTuple) #updated visited set, was puzzle check before
         #print("generating child for count", count1)
+        expandedCount += 1
         children =  generateChild(node, heurName) #get children notes by expanding/generating childs
         #print('got here for pusihing children in the queue')
        # print(len(children))
@@ -319,7 +339,7 @@ def generalSearch(initialState, heurName):
                     # visited.add(state)
                     heapq.heappush(nodes, (i.depth + i.heur, i))
                 
-        #print(len(nodes))
+        
     return None
 
 
