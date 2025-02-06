@@ -1,18 +1,21 @@
-import heapq as min_heap_esque_queue
-import heapq
-from queue import Queue
-import time
+import heapq #Referenced this when using heapq:  https://docs.python.org/3/library/heapq.html  
+#from queue import Queue #didnt use
+import time #Referenced this when using timer:  https://realpython.com/python-timer/  
+
+#In general I used this python documentation:
+#(https://docs.python.org/3/tutorial/index.html ) 
 
 
+#Goal States from Project 1 Instruction
 goalState = [[1,2,3],
             [4,5,6],
             [7,8,0]]
 
-trivial = [[0,7,2],
+trivial1 = [[0,7,2],
            [4,6,1],
            [3,5,8]]
 
-trivial1 = [[1,2,3],
+trivial = [[1,2,3],
            [4,5,6],
            [7,8,0]]
 
@@ -32,7 +35,7 @@ ohboy =  [[8,7,1],
         [5,4,3]]
 
 
-
+#Node class reference: https://www.educative.io/answers/how-to-solve-the-8-puzzle-problem-using-the-a-star-algorithm 
 class Node:
     def __init__(self, puzzle, root = None, depth = 0, parent = None,  heur = 0):
         self.puzzle = puzzle #current puzzle
@@ -54,8 +57,9 @@ def findblank(puzzle) : #finds 0
     for i in range(len(puzzle)):
         for j in range(len(puzzle[i])):
             if(puzzle[i][j] == 0):
-                return i, j
-    
+                return i, j #returns col and row position of 0
+
+#Took inspiration/got idea from this: https://stackoverflow.com/questions/17873384/how-to-deep-copy-a-list      
 def copyPuzzle(puzzle): #to make a copy of the puzzle
     copy =[]
     for i in puzzle:
@@ -66,7 +70,8 @@ def copyPuzzle(puzzle): #to make a copy of the puzzle
     return copy
 
 
-
+#Used this link to understand the function: https://www.educative.io/answers/how-to-solve-the-8-puzzle-problem-using-the-a-star-algorithm 
+#Additionally, I consulted with TA to check my logic
 def generateChild(node, searchName):
     puzzle = node.puzzle
     #find posiiton of blank (0)
@@ -135,7 +140,7 @@ def generateChild(node, searchName):
     return children
     
     
-    
+    #NOTES from TA office hours
     #pop the one with the least cost in the q
     #will insert all 4 children in the priority q
     #check while q is not empty when you search priority q
@@ -144,7 +149,7 @@ def generateChild(node, searchName):
         
 
 
-
+#From Project 1 Instructions
 def select_and_init_algorithm(puzzle):
     algorithm = input("Select algorithm. (1) for Uniform Cost Search, (2) for the Misplaced Tile Heuristic, ""or (3) the Manhattan Distance Heuristic." + '\n')
     if algorithm == "1":
@@ -157,6 +162,7 @@ def select_and_init_algorithm(puzzle):
         print("Invalid input")
 
 
+#From Project 1 Instructions
 def main():
     puzzle_mode = input("Welcome to an 8-Puzzle Solver. Type '1' to use a default puzzle, or '2' to create your own."+ '\n')
     if puzzle_mode == "1":
@@ -177,6 +183,8 @@ def main():
         select_and_init_algorithm(user_puzzle)
     return 
 
+
+#From Project 1 Instructions
 def init_default_puzzle_mode():
     selected_difficulty = input("You wish to use a default puzzle. Please enter a desired difficulty on a scale from 0 to 4." + '\n')
     if selected_difficulty == "0":
@@ -197,11 +205,16 @@ def init_default_puzzle_mode():
 
     
 
+#From Project 1 Instructions
 def print_puzzle(puzzle):
     for i in range(0,3): 
         print(puzzle[i])
     print('\n')
 
+#Referenced following links: 
+# Link: https://docs.python.org/3/tutorial/datastructures.html 
+#Link: https://www.w3schools.com/python/python_dictionaries.asp 
+#Link:https://stackoverflow.com/questions/16318757/calculating-manhattan-distance-in-python-in-an-8-puzzle-game 
 
 def mapping(goalState): #general function to create dictionary so you can map the values and find out where all the numbers are
     chart = {} #create empty dict - chart that will store location of all tiles currently
@@ -209,8 +222,13 @@ def mapping(goalState): #general function to create dictionary so you can map th
         for j in range(len(goalState[i])): #calculates key for dict
             chart[goalState[i][j]] = (i,j) #adds tuple (value) to the chart (dictionary)
     return chart
+#tile value/number -> key, goal position (i,j) -> value 
 
 
+#For manhattan, I referenced the following and the slides as well:
+#Link: https://docs.python.org/3/tutorial/datastructures.html 
+#Link: https://www.w3schools.com/python/python_dictionaries.asp 
+#Link:https://stackoverflow.com/questions/16318757/calculating-manhattan-distance-in-python-in-an-8-puzzle-game 
 def heuristics(puzzle, heurName): #returns heuristic
     
     if heurName == "misplaced tile":
@@ -225,11 +243,11 @@ def heuristics(puzzle, heurName): #returns heuristic
         distance = 0
         for i in range(len(puzzle)):
             for j in range(len(puzzle[i])):
-                chosen = puzzle[i][j]
+                chosen = puzzle[i][j] #gets num/tile at (i,j)
                 if (chosen != 0 and puzzle[i][j] != goalState[i][j]): #if its not a blank tile and if its already not in the goal position, then get its distance
-                    actual_i = positions[chosen][0]
-                    actual_j = positions[chosen][1]
-                    distance += abs(j - actual_j) + abs(i - actual_i)
+                    actual_i = positions[chosen][0] #extracts row of num we are looking for (first item)
+                    actual_j = positions[chosen][1] #extracts col (2nd item)
+                    distance += abs(j - actual_j) + abs(i - actual_i) #formula from the slides
         return distance
     
     elif heurName == "uniform":
@@ -238,15 +256,23 @@ def heuristics(puzzle, heurName): #returns heuristic
         raise ValueError("Invalid Heurisitic Name")
 
 
+#Notes from TA:
 #general search
 #empty q-> intialize first node
 #while q is not empty, pop front of the q which will return a node (after popping see if the popped node is a goal state or not)
 #generate child nodes -> insert in q after getting heuristics
-
-
 #make a general search function, have the function take in the heurisitc and puzzle
-
 #use heapq since it maintains smallest element/lowest priority at top
+
+
+
+#Referenced this link to understand queues: Link: https://www.geeksforgeeks.org/queue-in-python/#google_vignette 
+#Referenced this to understand sets: https://docs.python.org/3/library/stdtypes.html#set 
+#More links I referenced (for tuples and such):
+#Link: https://www.w3schools.com/python/python_tuples.asp
+#Link: https://www.geeksforgeeks.org/python-convert-list-of-lists-to-tuple-of-tuples/ 
+#Link: https://docs.python.org/3/tutorial/datastructures.html 
+
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
 
@@ -258,42 +284,49 @@ def generalSearch(initialState, heurName):
     #Notes: g(n) + h(n) = f(n), smallest f(n) is expanded
 
 
-    #DOUBLE CHECK U ARE USING MIN HEAP
+    #DOUBLE CHECK U ARE USING MIN HEAP -> yes you are using minheap
     Ongoing = True
 
-    #path so far so you can trace
+    #repeated puzzle states
     visited = set()
-   # count1 = 0
-    maxQlen = 0 #find len of the max queue
-    expandedCount = 0
+    #TESTING
+    #count1 = 0
+    maxQlen = 0 #find len of the max queue (GRAPH)
+    expandedCount = 0 #to find num of expanded nodes (GRAPH)
 
 
     while Ongoing: #check heap size instead
-       # print("ongoing")
+        #TESTING
+        #print("ongoing")
         if not nodes: #if nodes is empty
             print("Queue empty")
             Ongoing = False
             return Ongoing
-        maxQlen = max(len(nodes), maxQlen)
+        
+        maxQlen = max(len(nodes), maxQlen) #find the max length of the queue (GRAPH)
         fnval, node = heapq.heappop(nodes) #remove cheapest node and store the node and its cost
+        #TESTING        
         #count1 += 1
         #print(f"count: {count1}")
     
-
+        #convert list of lists into tuple of tuples so i can put it in a set
+        #tuples - less memory and faster access
         nodeTuple = []
         for i in node.puzzle:
             nodeTuple.append(tuple(i))
         nodeTuple = tuple(nodeTuple)
 
+        #convert to tuple so you can compare to other tuples
         goalTuple = []
         for i in goalState:
             goalTuple.append(tuple(i))
         goalTuple = tuple(goalTuple)
-        #print(nodeTuple, goalTuple)
+
+       
         if(nodeTuple == goalTuple): #if puzzle is at goal state, we are finished
             depth = node.depth #depth of final node
             correctPath = []
-            while node:
+            while node: #create a path and reverse it so you can print in correct order
                 correctPath.append(node.puzzle)
                 node = node.parent
             correctPath.reverse()
@@ -311,6 +344,8 @@ def generalSearch(initialState, heurName):
             return node
 
         '''
+        #Alternative way
+
         puzzleCheck = [] #turn list of lists into tuple of tuples so its immutable and we can hash
         for i in node.puzzle:
             puzzleCheck.append(tuple(i)) #turn each row to a tuple
@@ -321,32 +356,37 @@ def generalSearch(initialState, heurName):
         '''
 
         if nodeTuple in visited:
+            #TESTING
             #print("nodeTuple is in visited")
             continue
+        
         visited.add(nodeTuple) #updated visited set, was puzzle check before
+        #TESTING
         #print("generating child for count", count1)
         expandedCount += 1
         children =  generateChild(node, heurName) #get children notes by expanding/generating childs
+        #TESTING
         #print('got here for pusihing children in the queue')
-       # print(len(children))
-        #add the child nodes to the queue
+        #print(len(children))
+        #add the child nodes to the queue after turning them into hashable tuples
         for i in children:
             if i is not None:
                 state = []
                 for j in i.puzzle:
                     state.append(tuple(j))
                 state = tuple(state)
+                #TESTING
                 #print(f"state:{state} visited: {visited}")
                 if state not in visited:
-                    # visited.add(state)
+                    # visited.add(state) -> wrong(fixed it.)
                     heapq.heappush(nodes, (i.depth + i.heur, i))
                 
         
     return None
 
-
+    #NOTES
     #keep track of depth
-    # #keep track of time it takes to run for the graphs       
+    #keep track of time it takes to run for the graphs       
         
         
 
