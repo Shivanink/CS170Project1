@@ -11,11 +11,11 @@ goalState = [[1,2,3],
             [4,5,6],
             [7,8,0]]
 
-trivial1 = [[0,7,2],
-           [4,6,1],
-           [3,5,8]]
+trivial = [[1,6,7],
+           [5,0,3],
+           [4,8,2]]
 
-trivial = [[1,2,3],
+trivial1 = [[1,2,3],
            [4,5,6],
            [7,8,0]]
 
@@ -327,11 +327,12 @@ def generalSearch(initialState, heurName):
             depth = node.depth #depth of final node
             correctPath = []
             while node: #create a path and reverse it so you can print in correct order
-                correctPath.append(node.puzzle)
+                correctPath.append(node)
                 node = node.parent
             correctPath.reverse()
             for i in correctPath:
-                print_puzzle(i)
+                print(f"The best state to expand with g(n) = {i.depth} and h(n) = {i.heur} is...")
+                print_puzzle(i.puzzle)
             ending = time.perf_counter()
 
             totalTime = (ending - starting) #caclulate duration
