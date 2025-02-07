@@ -350,18 +350,6 @@ def generalSearch(initialState, heurName):
             print("Goal Reached!")
             return node
 
-        '''
-        #Alternative way
-
-        puzzleCheck = [] #turn list of lists into tuple of tuples so its immutable and we can hash
-        for i in node.puzzle:
-            puzzleCheck.append(tuple(i)) #turn each row to a tuple
-        puzzleCheck = tuple(puzzleCheck) #list of tuples to tuple of tuples
-
-        if puzzleCheck in visited: #check if a puzzle has been visited or not and make sure it only gets visited once
-            continue
-        '''
-
         if nodeTuple in visited:
             #TESTING
             #print("nodeTuple is in visited")
