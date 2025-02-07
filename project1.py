@@ -4,6 +4,7 @@ import time #Referenced this when using timer:  https://realpython.com/python-ti
 
 #In general I used this python documentation:
 #(https://docs.python.org/3/tutorial/index.html ) 
+#(https://www.python-engineer.com/courses/advancedpython/01-lists/ ) I referenced other tutorials on this website as well.
 
 
 #Goal States from Project 1 Instruction
@@ -215,6 +216,9 @@ def print_puzzle(puzzle):
 # Link: https://docs.python.org/3/tutorial/datastructures.html 
 #Link: https://www.w3schools.com/python/python_dictionaries.asp 
 #Link:https://stackoverflow.com/questions/16318757/calculating-manhattan-distance-in-python-in-an-8-puzzle-game 
+#Link:https://www.geeksforgeeks.org/python-create-dictionary-of-tuples/?ref=ml_lbp 
+#Link:https://www.geeksforgeeks.org/python-sorting-a-dictionary-of-tuples/?ref=ml_lbp
+#Link:https://www.python-engineer.com/courses/advancedpython/02-tuples/ 
 
 def mapping(goalState): #general function to create dictionary so you can map the values and find out where all the numbers are
     chart = {} #create empty dict - chart that will store location of all tiles currently
@@ -272,6 +276,8 @@ def heuristics(puzzle, heurName): #returns heuristic
 #Link: https://www.w3schools.com/python/python_tuples.asp
 #Link: https://www.geeksforgeeks.org/python-convert-list-of-lists-to-tuple-of-tuples/ 
 #Link: https://docs.python.org/3/tutorial/datastructures.html 
+#Link: https://stackoverflow.com/questions/2174124/why-do-we-need-tuples-in-python-or-any-immutable-data-type 
+#Link: https://builtin.com/software-engineering-perspectives/python-tuples-vs-lists#:~:text=Tuples%20are%20immutable%20objects%20and,list%20syntax%20uses%20square%20brackets. 
 
 def generalSearch(initialState, heurName):
     nodes = [] #make empty Queue
